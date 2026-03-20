@@ -33,22 +33,22 @@ public struct OCIReference: Sendable, Hashable, CustomStringConvertible {
 
     /// URL for manifest operations: `GET/PUT /v2/{repository}/manifests/{reference}`
     public var manifestURL: URL {
-        apiBaseURL.appendingPathComponent("/v2/\(repository)/manifests/\(reference)")
+        URL(string: "https://\(registry)/v2/\(repository)/manifests/\(reference)")!
     }
 
     /// URL for blob operations: `GET/HEAD /v2/{repository}/blobs/{digest}`
     public func blobURL(digest: String) -> URL {
-        apiBaseURL.appendingPathComponent("/v2/\(repository)/blobs/\(digest)")
+        URL(string: "https://\(registry)/v2/\(repository)/blobs/\(digest)")!
     }
 
     /// URL to initiate a blob upload: `POST /v2/{repository}/blobs/uploads/`
     public var blobUploadURL: URL {
-        apiBaseURL.appendingPathComponent("/v2/\(repository)/blobs/uploads/")
+        URL(string: "https://\(registry)/v2/\(repository)/blobs/uploads/")!
     }
 
     /// URL to list tags: `GET /v2/{repository}/tags/list`
     public var tagsListURL: URL {
-        apiBaseURL.appendingPathComponent("/v2/\(repository)/tags/list")
+        URL(string: "https://\(registry)/v2/\(repository)/tags/list")!
     }
 
     public init(registry: String, repository: String, tag: String? = nil, digest: String? = nil) {

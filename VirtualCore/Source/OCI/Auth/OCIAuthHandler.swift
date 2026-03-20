@@ -76,7 +76,7 @@ public final class OCIAuthHandler: @unchecked Sendable {
 
     /// Hit the registry's /v2/ endpoint to get the WWW-Authenticate challenge.
     private func discoverChallenge(for reference: OCIReference) async throws -> AuthChallenge {
-        let url = reference.apiBaseURL.appendingPathComponent("/v2/")
+        let url = URL(string: "https://\(reference.registry)/v2/")!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
 

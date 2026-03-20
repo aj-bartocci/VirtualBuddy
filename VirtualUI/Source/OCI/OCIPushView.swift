@@ -1,5 +1,6 @@
 import SwiftUI
 import VirtualCore
+import UniformTypeIdentifiers
 
 /// View for pushing (uploading) a VM image to an OCI registry.
 /// Presented as a sheet from the VM library context menu.
@@ -7,13 +8,17 @@ public struct OCIPushView: View {
     @StateObject private var uploadManager = VBUploadManager()
     @Environment(\.dismiss) private var dismiss
 
-    private let ipswURL: URL
+    @State private var selectedFileURL: URL?
     @State private var tag: String
     @State private var config = OCIRegistryConfiguration.current
+    @State private var showFilePicker = false
 
-    public init(ipswURL: URL, suggestedTag: String? = nil) {
-        self.ipswURL = ipswURL
-        _tag = State(initialValue: suggestedTag ?? ipswURL.deletingPathExtension().lastPathComponent)
+    private let defaultDirectory: URL?
+
+    public init(defaultDirectory: URL? = nil, suggestedTag: String? = nil) {
+        self.defaultDirectory = defaultDirectory
+        _selectedFileURL = State(initialValue: nil)
+        _tag = State(initialValue: suggestedTag ?? "")
     }
 
     private var reference: OCIReference {
@@ -21,7 +26,7 @@ public struct OCIPushView: View {
     }
 
     private var canPush: Bool {
-        !config.registryURL.isEmpty && !config.repository.isEmpty && !tag.isEmpty
+        selectedFileURL != nil && !config.registryURL.isEmpty && !config.repository.isEmpty && !tag.isEmpty
     }
 
     public var body: some View {
@@ -29,6 +34,7 @@ public struct OCIPushView: View {
             ScrollView(.vertical) {
                 VStack(alignment: .leading, spacing: 20) {
                     headerSection
+                    fileSection
                     configSection
                     progressSection
                 }
@@ -39,27 +45,64 @@ public struct OCIPushView: View {
 
             bottomBar
         }
-        .frame(minWidth: 480, maxWidth: 520, minHeight: 340)
+        .frame(minWidth: 480, maxWidth: 520, minHeight: 380)
+        .onChange(of: showFilePicker) { show in
+            guard show else { return }
+            showFilePicker = false
+
+            let panel = NSOpenPanel()
+            panel.allowedContentTypes = [.data]
+            panel.allowsMultipleSelection = false
+            panel.canChooseDirectories = false
+            panel.canChooseFiles = true
+            panel.directoryURL = defaultDirectory
+
+            guard panel.runModal() == .OK, let url = panel.url else { return }
+            selectedFileURL = url
+            if tag.isEmpty {
+                tag = url.deletingPathExtension().lastPathComponent
+            }
+        }
     }
 
     // MARK: - Sections
 
     @ViewBuilder
     private var headerSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Push to Registry")
-                .font(.title2.weight(.semibold))
+        Text("Push to Registry")
+            .font(.title2.weight(.semibold))
+    }
 
-            HStack(spacing: 6) {
-                Image(systemName: "doc.zipper")
-                    .foregroundStyle(.secondary)
-                Text(ipswURL.lastPathComponent)
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
+    @ViewBuilder
+    private var fileSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("File")
+                .font(.callout.weight(.medium))
+
+            HStack {
+                if let url = selectedFileURL {
+                    HStack(spacing: 6) {
+                        Image(systemName: "doc.zipper")
+                            .foregroundStyle(.secondary)
+                        Text(url.lastPathComponent)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
+                } else {
+                    Text("No file selected")
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Button("Choose...") {
+                    showFilePicker = true
+                }
             }
+            .padding(10)
+            .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 8))
         }
+        .disabled(isInProgress)
     }
 
     @ViewBuilder
@@ -212,12 +255,13 @@ public struct OCIPushView: View {
     }
 
     private func startPush() {
+        guard let fileURL = selectedFileURL else { return }
         let metadata = VBImageMetadata(
             build: tag,
             version: tag,
-            name: ipswURL.deletingPathExtension().lastPathComponent
+            name: fileURL.deletingPathExtension().lastPathComponent
         )
-        uploadManager.upload(ipswURL: ipswURL, to: reference, metadata: metadata)
+        uploadManager.upload(ipswURL: fileURL, to: reference, metadata: metadata)
     }
 
     private func formattedETA(_ eta: Double) -> String {

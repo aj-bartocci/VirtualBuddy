@@ -203,13 +203,24 @@ private struct RestoreImageButton: View {
         }
     }
 
+    private var isOCIImage: Bool {
+        image.image.ociReference != nil
+    }
+
     @ViewBuilder
     private var downloadState: some View {
         HStack {
-            Image(systemName: image.isDownloaded ? "internaldrive" : "arrow.down.circle")
-                .frame(width: 16)
-                .foregroundStyle(.secondary)
-                .help(image.isDownloaded ? "This version is available from your previous downloads." : "This version needs to be downloaded.")
+            if isOCIImage {
+                Image(systemName: image.isDownloaded ? "internaldrive" : "shippingbox")
+                    .frame(width: 16)
+                    .foregroundStyle(image.isDownloaded ? Color.secondary : Color.accentColor)
+                    .help(image.isDownloaded ? "This version is available from your previous downloads." : "This version is available from the OCI registry.")
+            } else {
+                Image(systemName: image.isDownloaded ? "internaldrive" : "arrow.down.circle")
+                    .frame(width: 16)
+                    .foregroundStyle(.secondary)
+                    .help(image.isDownloaded ? "This version is available from your previous downloads." : "This version needs to be downloaded.")
+            }
 
             Text(image.name)
                 .minimumScaleFactor(0.8)

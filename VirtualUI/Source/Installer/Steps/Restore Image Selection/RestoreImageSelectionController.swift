@@ -101,18 +101,56 @@ final class RestoreImageSelectionController: ObservableObject {
                 }
                 #endif
 
-                let catalog = try await api.fetchRestoreImages(for: guest, skipCache: skipCache)
+                var catalog = try await api.fetchRestoreImages(for: guest, skipCache: skipCache)
+
+                // Merge OCI registry images if configured
+                catalog = await mergeOCIImages(into: catalog)
+
                 inputCatalog = catalog
 
                 await refreshResolvedCatalog(with: catalog)
             } catch {
                 logger.error("Loading restore images failed - \(error, privacy: .public)")
-                
+
                 await MainActor.run {
                     self.catalog = nil
                     self.errorMessage = error.localizedDescription
                 }
             }
+        }
+    }
+
+    private func mergeOCIImages(into catalog: SoftwareCatalog) async -> SoftwareCatalog {
+        let config = OCIRegistryConfiguration.current
+
+        guard config.isEnabled else { return catalog }
+
+        do {
+            let provider = OCICatalogProvider()
+            let ociImages = try await provider.fetchImages(config: config)
+
+            guard !ociImages.isEmpty else { return catalog }
+
+            var merged = catalog
+
+            // Add the OCI group and channel if not present
+            if !merged.groups.contains(where: { $0.id == CatalogGroup.ociGroup.id }) {
+                merged.groups.insert(.ociGroup, at: 0)
+            }
+            if !merged.channels.contains(where: { $0.id == CatalogChannel.ociChannel.id }) {
+                merged.channels.append(.ociChannel)
+            }
+            if !merged.requirementSets.contains(where: { $0.id == RequirementSet.ociDefault.id }) {
+                merged.requirementSets.append(.ociDefault)
+            }
+
+            // Add OCI images
+            merged.restoreImages.append(contentsOf: ociImages)
+
+            return merged
+        } catch {
+            logger.error("Failed to fetch OCI registry images: \(error, privacy: .public)")
+            return catalog
         }
     }
 

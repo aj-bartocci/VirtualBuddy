@@ -63,7 +63,7 @@ extension VMInstallData {
     var downloadURL: URL? {
         switch installMethodSelection {
         case .remoteManual(let url): url
-        case .remoteOptions(let image): image.url
+        case .remoteOptions(let image): image.effectiveURL
         case .localFile: nil
         case .none: nil
         }

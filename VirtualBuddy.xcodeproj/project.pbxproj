@@ -31,6 +31,7 @@
 		210185972F6D163600E05C70 /* VirtualCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4BE9C6527FF053A00B648F8 /* VirtualCore.framework */; };
 		45BA402C8038C1FB3665AA62 /* OCIReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A646168C82116059292312 /* OCIReference.swift */; };
 		4BA6BE7D293D22E500F396AE /* VirtualMachineConfigurationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA6BE7C293D22E500F396AE /* VirtualMachineConfigurationHelper.swift */; };
+		56D7484B8403971C3266C7AA /* OCICatalogProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04CF439C8F2BF811C0B638F5 /* OCICatalogProvider.swift */; };
 		5FA04DF78DADBCC5D13A7DFF /* OCICredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F931442282347B7F2B41DE9B /* OCICredentialStore.swift */; };
 		88DD4D86898080B82D340DE3 /* StreamingSHA256.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C444139E778B2C34E6876C /* StreamingSHA256.swift */; };
 		A4D6496E825AAFAACBD1BFCD /* OCIAuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2740928E831BD3DC94CF65 /* OCIAuthTests.swift */; };
@@ -570,6 +571,7 @@
 
 /* Begin PBXFileReference section */
 		0196B45229292B2A00614EF1 /* LinuxVirtualMachineConfigurationHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinuxVirtualMachineConfigurationHelper.swift; sourceTree = "<group>"; };
+		04CF439C8F2BF811C0B638F5 /* OCICatalogProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCICatalogProvider.swift; path = VirtualCore/Source/OCI/Client/OCICatalogProvider.swift; sourceTree = SOURCE_ROOT; };
 		1BBD4EC28331D4C2471EF36D /* OCIDownloadBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIDownloadBackend.swift; path = VirtualCore/Source/Restore/Download/OCIDownloadBackend.swift; sourceTree = SOURCE_ROOT; };
 		210185932F6D163600E05C70 /* VirtualCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VirtualCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		334F4E4E82A344BD4221E767 /* OCIPushClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIPushClient.swift; path = VirtualCore/Source/OCI/Client/OCIPushClient.swift; sourceTree = SOURCE_ROOT; };
@@ -1823,6 +1825,7 @@
 				43FF4B6FA389A735EC01FDE6 /* StreamingSHA256Tests.swift */,
 				ED2740928E831BD3DC94CF65 /* OCIAuthTests.swift */,
 				804D4667B4FD9C589214845C /* OCIRegistrySettingsTests.swift */,
+				04CF439C8F2BF811C0B638F5 /* OCICatalogProvider.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2899,6 +2902,7 @@
 				1BD34760A04AA37CC61E2489 /* OCIRegistrySettings.swift in Sources */,
 				A9854A6C8FDC2DA837DD1E53 /* VBUploadManager.swift in Sources */,
 				F6AE4A739C4B162C025A9BB7 /* OCIDownloadBackend.swift in Sources */,
+				56D7484B8403971C3266C7AA /* OCICatalogProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
