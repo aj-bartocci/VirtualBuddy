@@ -23,6 +23,7 @@ public struct VMConfigurationSheet: View {
     @Binding private var savedConfiguration: VBMacConfiguration
 
     @State private var showValidationErrors = false
+    @State private var unfocusActiveField = UnfocusFieldSubject()
     
     private var showsCancelButton: Bool { viewModel.context == .postInstall }
     private var customConfirmationButtonAction: ((VBMacConfiguration) -> Void)? = nil
@@ -51,6 +52,7 @@ public struct VMConfigurationSheet: View {
         ScrollView(.vertical) {
             VMConfigurationView(initialConfiguration: initialConfiguration)
                 .environmentObject(viewModel)
+                .environment(\.unfocusActiveField, unfocusActiveField)
                 .frame(maxWidth: isInstall ? maxContentWidth : nil)
                 .padding(containerPadding)
                 .frame(maxWidth: .infinity)
@@ -107,19 +109,30 @@ public struct VMConfigurationSheet: View {
     }
     
     private func validateAndSave() {
+        unfocusActiveField.send(.commit)
         showValidationErrors = true
 
         Task {
             let state = await viewModel.validate()
             
             guard state.allowsSaving else { return }
-            
-            savedConfiguration = viewModel.config
-            
-            if let customConfirmationButtonAction {
-                customConfirmationButtonAction(savedConfiguration)
-            } else {
-                dismiss()
+
+            do {
+                try await viewModel.commitStorageChangesIfNeeded()
+                
+                await MainActor.run {
+                    savedConfiguration = viewModel.config
+
+                    if let customConfirmationButtonAction {
+                        customConfirmationButtonAction(savedConfiguration)
+                    } else {
+                        dismiss()
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    NSAlert(error: error).runModal()
+                }
             }
         }
     }
