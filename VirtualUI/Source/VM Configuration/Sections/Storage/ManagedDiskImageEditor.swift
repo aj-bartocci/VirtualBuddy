@@ -12,12 +12,14 @@ struct ManagedDiskImageEditor: View {
     @State private var image: VBManagedDiskImage
     var minimumSize: UInt64
     var isExistingDiskImage: Bool
+    var requiresGuestInitialization: Bool
     var onSave: (VBManagedDiskImage) -> Void
     var isBootVolume: Bool
 
-    init(image: VBManagedDiskImage, isExistingDiskImage: Bool, isForBootVolume: Bool, onSave: @escaping (VBManagedDiskImage) -> Void) {
+    init(image: VBManagedDiskImage, isExistingDiskImage: Bool, isForBootVolume: Bool, requiresGuestInitialization: Bool, onSave: @escaping (VBManagedDiskImage) -> Void) {
         self._image = .init(wrappedValue: image)
         self.isExistingDiskImage = isExistingDiskImage
+        self.requiresGuestInitialization = requiresGuestInitialization
         self.onSave = onSave
         let fallbackMinimumSize = isForBootVolume ? VBManagedDiskImage.minimumBootDiskImageSize : VBManagedDiskImage.minimumExtraDiskImageSize
         self.minimumSize = isExistingDiskImage ? image.size : fallbackMinimumSize
@@ -62,7 +64,7 @@ struct ManagedDiskImageEditor: View {
             .foregroundColor(sizeWarning != nil ? .yellow : .primary)
 
             VStack(alignment: .leading, spacing: 8) {
-                if !isExistingDiskImage, !isBootVolume {
+                if !isExistingDiskImage, !isBootVolume, requiresGuestInitialization {
                     Text("You'll have to use Disk Utility in the guest operating system to initialize the disk image. If you see an error after it boots up, choose the \"Initialize\" option.")
                         .foregroundColor(.yellow)
                 }

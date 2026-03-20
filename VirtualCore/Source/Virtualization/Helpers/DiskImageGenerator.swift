@@ -27,10 +27,21 @@ public final class DiskImageGenerator {
     public struct ImageSettings {
         public var url: URL
         public var template: VBManagedDiskImage
+        public var preinitializeFilesystem = false
         
         public init(for image: VBManagedDiskImage, in vm: VBVirtualMachine) {
             self.url = vm.diskImageURL(for: image)
             self.template = image
+        }
+
+        public init(for device: VBStorageDevice, in vm: VBVirtualMachine) throws {
+            guard case .managedImage(let image) = device.backing else {
+                throw Failure("Only managed disk images can be created.")
+            }
+
+            self.url = vm.diskImageURL(for: image)
+            self.template = image
+            self.preinitializeFilesystem = !device.isBootVolume && vm.configuration.systemType == .mac
         }
     }
 
@@ -41,7 +52,7 @@ public final class DiskImageGenerator {
 
         switch settings.template.format {
         case .raw:
-            try generateRaw(with: settings)
+            try await generateRaw(with: settings)
         case .dmg, .sparse:
             try await generateDMG(with: settings)
         case .asif:
@@ -49,7 +60,23 @@ public final class DiskImageGenerator {
         }
     }
 
-    private static func generateRaw(with settings: ImageSettings) throws {
+    private static func generateRaw(with settings: ImageSettings) async throws {
+        if settings.preinitializeFilesystem {
+            try await diskutil(arguments: [
+                "image",
+                "create",
+                "blank",
+                "--format",
+                "RAW",
+                "--size",
+                "\(settings.template.size)b",
+                "--volumeName",
+                settings.template.filename,
+                settings.url.path
+            ])
+            return
+        }
+
         let diskFd = open(settings.url.path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR)
         if diskFd == -1 {
             throw Failure("Cannot create disk image.")
