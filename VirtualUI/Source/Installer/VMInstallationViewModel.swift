@@ -313,6 +313,11 @@ final class VMInstallationViewModel: ObservableObject, @unchecked Sendable {
     }
 
     private func createDownloadBackend(cookie: String?) -> DownloadBackend {
+        // Route OCI references to the OCI download backend
+        if data.downloadURL?.scheme == "oci" {
+            return OCIDownloadBackend(library: library, cookie: cookie)
+        }
+
         let Backend: DownloadBackend.Type
         #if DEBUG
         if UserDefaults.standard.bool(forKey: "VBSimulateDownload") || ProcessInfo.isSwiftUIPreview {

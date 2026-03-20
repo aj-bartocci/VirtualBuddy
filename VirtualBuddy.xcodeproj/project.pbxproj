@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -24,7 +24,24 @@
 
 /* Begin PBXBuildFile section */
 		0196B45329292B2A00614EF1 /* LinuxVirtualMachineConfigurationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0196B45229292B2A00614EF1 /* LinuxVirtualMachineConfigurationHelper.swift */; };
+		05464545A8C38D9447BDDA62 /* OCIPushClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334F4E4E82A344BD4221E767 /* OCIPushClient.swift */; };
+		12C0422D801A37D9BDF86D6C /* RegistryCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93C47D187C1F8DBE7AC4795 /* RegistryCommand.swift */; };
+		1BD34760A04AA37CC61E2489 /* OCIRegistrySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50A40DEB718711DEE461E7A /* OCIRegistrySettings.swift */; };
+		1FCA41F3AC4CB350C37721C8 /* OCIPullClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5784EE991F2D80F47B6B508 /* OCIPullClient.swift */; };
+		210185972F6D163600E05C70 /* VirtualCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4BE9C6527FF053A00B648F8 /* VirtualCore.framework */; };
+		45BA402C8038C1FB3665AA62 /* OCIReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A646168C82116059292312 /* OCIReference.swift */; };
 		4BA6BE7D293D22E500F396AE /* VirtualMachineConfigurationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA6BE7C293D22E500F396AE /* VirtualMachineConfigurationHelper.swift */; };
+		5FA04DF78DADBCC5D13A7DFF /* OCICredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F931442282347B7F2B41DE9B /* OCICredentialStore.swift */; };
+		88DD4D86898080B82D340DE3 /* StreamingSHA256.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C444139E778B2C34E6876C /* StreamingSHA256.swift */; };
+		A4D6496E825AAFAACBD1BFCD /* OCIAuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2740928E831BD3DC94CF65 /* OCIAuthTests.swift */; };
+		A4FD47748459FD7744A1E0EA /* OCIRegistrySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8167484199DEB6F531194C2C /* OCIRegistrySettingsView.swift */; };
+		A9854A6C8FDC2DA837DD1E53 /* VBUploadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8C34B5996B25A7258C6A595 /* VBUploadManager.swift */; };
+		AC634ECF96D95841601B1596 /* OCIModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCA49E9BFD3976A907C3810 /* OCIModelsTests.swift */; };
+		B0AB4BCAB958E45327990BAD /* OCIAuthHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB0346769CEB327B8FCCF64D /* OCIAuthHandler.swift */; };
+		C96D439391A4AA466CEAAEB9 /* OCIRegistrySettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804D4667B4FD9C589214845C /* OCIRegistrySettingsTests.swift */; };
+		CF2B4E4F86E7FBBE1689EBAC /* OCIPushView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33624F7BAE6200718E12FA78 /* OCIPushView.swift */; };
+		E544455ABC95755CA21DC0BC /* OCIReferenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62604E689EF5532019569F84 /* OCIReferenceTests.swift */; };
+		EFD34D828656797C1B662E25 /* OCIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480D46EFA2562CD8026AAA72 /* OCIModels.swift */; };
 		F40A1E9D2C1873CA0033E47D /* VBBuildType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F40A1E9C2C1873C60033E47D /* VBBuildType.swift */; };
 		F413696229916F6E002CE8D3 /* StatusItemButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F413695129916F6E002CE8D3 /* StatusItemButton.swift */; };
 		F413696329916F6E002CE8D3 /* StatusBarPanelChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F413695229916F6E002CE8D3 /* StatusBarPanelChrome.swift */; };
@@ -342,9 +359,18 @@
 		F4FC98392BB386A000E511C9 /* ContinuousProgressIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FC98382BB386A000E511C9 /* ContinuousProgressIndicator.swift */; };
 		F4FC983B2BB386B500E511C9 /* MaskProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FC983A2BB386B500E511C9 /* MaskProgressView.swift */; };
 		F4FC983D2BB386DD00E511C9 /* VMProgressOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FC983C2BB386DD00E511C9 /* VMProgressOverlay.swift */; };
+		F6AE4A739C4B162C025A9BB7 /* OCIDownloadBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BBD4EC28331D4C2471EF36D /* OCIDownloadBackend.swift */; };
+		F86542BABB4CBB6DC55BB8D6 /* StreamingSHA256Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FF4B6FA389A735EC01FDE6 /* StreamingSHA256Tests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		210185982F6D163600E05C70 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F4BE9C4627FF052100B648F8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F4BE9C6427FF053A00B648F8;
+			remoteInfo = VirtualCore;
+		};
 		F413699C299179F8002CE8D3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F4BE9C4627FF052100B648F8 /* Project object */;
@@ -544,7 +570,24 @@
 
 /* Begin PBXFileReference section */
 		0196B45229292B2A00614EF1 /* LinuxVirtualMachineConfigurationHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinuxVirtualMachineConfigurationHelper.swift; sourceTree = "<group>"; };
+		1BBD4EC28331D4C2471EF36D /* OCIDownloadBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIDownloadBackend.swift; path = VirtualCore/Source/Restore/Download/OCIDownloadBackend.swift; sourceTree = SOURCE_ROOT; };
+		210185932F6D163600E05C70 /* VirtualCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VirtualCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		334F4E4E82A344BD4221E767 /* OCIPushClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIPushClient.swift; path = VirtualCore/Source/OCI/Client/OCIPushClient.swift; sourceTree = SOURCE_ROOT; };
+		33624F7BAE6200718E12FA78 /* OCIPushView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIPushView.swift; path = VirtualUI/Source/OCI/OCIPushView.swift; sourceTree = SOURCE_ROOT; };
+		43FF4B6FA389A735EC01FDE6 /* StreamingSHA256Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StreamingSHA256Tests.swift; path = VirtualCoreTests/StreamingSHA256Tests.swift; sourceTree = SOURCE_ROOT; };
+		480D46EFA2562CD8026AAA72 /* OCIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIModels.swift; path = VirtualCore/Source/OCI/Models/OCIModels.swift; sourceTree = SOURCE_ROOT; };
 		4BA6BE7C293D22E500F396AE /* VirtualMachineConfigurationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualMachineConfigurationHelper.swift; sourceTree = "<group>"; };
+		62604E689EF5532019569F84 /* OCIReferenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIReferenceTests.swift; path = VirtualCoreTests/OCIReferenceTests.swift; sourceTree = SOURCE_ROOT; };
+		804D4667B4FD9C589214845C /* OCIRegistrySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIRegistrySettingsTests.swift; path = VirtualCoreTests/OCIRegistrySettingsTests.swift; sourceTree = SOURCE_ROOT; };
+		8167484199DEB6F531194C2C /* OCIRegistrySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIRegistrySettingsView.swift; path = VirtualUI/Source/Settings/OCIRegistrySettingsView.swift; sourceTree = SOURCE_ROOT; };
+		9DCA49E9BFD3976A907C3810 /* OCIModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIModelsTests.swift; path = VirtualCoreTests/OCIModelsTests.swift; sourceTree = SOURCE_ROOT; };
+		B50A40DEB718711DEE461E7A /* OCIRegistrySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIRegistrySettings.swift; path = VirtualCore/Source/OCI/Settings/OCIRegistrySettings.swift; sourceTree = SOURCE_ROOT; };
+		B5784EE991F2D80F47B6B508 /* OCIPullClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIPullClient.swift; path = VirtualCore/Source/OCI/Client/OCIPullClient.swift; sourceTree = SOURCE_ROOT; };
+		C8C34B5996B25A7258C6A595 /* VBUploadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VBUploadManager.swift; path = VirtualCore/Source/OCI/Upload/VBUploadManager.swift; sourceTree = SOURCE_ROOT; };
+		C93C47D187C1F8DBE7AC4795 /* RegistryCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RegistryCommand.swift; path = VirtualBuddy/CommandLine/vctool/RegistryCommand.swift; sourceTree = SOURCE_ROOT; };
+		CB0346769CEB327B8FCCF64D /* OCIAuthHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIAuthHandler.swift; path = VirtualCore/Source/OCI/Auth/OCIAuthHandler.swift; sourceTree = SOURCE_ROOT; };
+		E2C444139E778B2C34E6876C /* StreamingSHA256.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StreamingSHA256.swift; path = VirtualCore/Source/OCI/Util/StreamingSHA256.swift; sourceTree = SOURCE_ROOT; };
+		ED2740928E831BD3DC94CF65 /* OCIAuthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIAuthTests.swift; path = VirtualCoreTests/OCIAuthTests.swift; sourceTree = SOURCE_ROOT; };
 		F40A1E9C2C1873C60033E47D /* VBBuildType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VBBuildType.swift; sourceTree = "<group>"; };
 		F413695129916F6E002CE8D3 /* StatusItemButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusItemButton.swift; sourceTree = "<group>"; };
 		F413695229916F6E002CE8D3 /* StatusBarPanelChrome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusBarPanelChrome.swift; sourceTree = "<group>"; };
@@ -853,9 +896,23 @@
 		F4FC98382BB386A000E511C9 /* ContinuousProgressIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinuousProgressIndicator.swift; sourceTree = "<group>"; };
 		F4FC983A2BB386B500E511C9 /* MaskProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskProgressView.swift; sourceTree = "<group>"; };
 		F4FC983C2BB386DD00E511C9 /* VMProgressOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMProgressOverlay.swift; sourceTree = "<group>"; };
+		F6A646168C82116059292312 /* OCIReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIReference.swift; path = VirtualCore/Source/OCI/Models/OCIReference.swift; sourceTree = SOURCE_ROOT; };
+		F931442282347B7F2B41DE9B /* OCICredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCICredentialStore.swift; path = VirtualCore/Source/OCI/Auth/OCICredentialStore.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		210185942F6D163600E05C70 /* VirtualCoreTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = VirtualCoreTests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
+		210185902F6D163600E05C70 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				210185972F6D163600E05C70 /* VirtualCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F41369A829918576002CE8D3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -937,6 +994,70 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		081F42A689C96341530A7577 /* Client */ = {
+			isa = PBXGroup;
+			children = (
+				B5784EE991F2D80F47B6B508 /* OCIPullClient.swift */,
+				334F4E4E82A344BD4221E767 /* OCIPushClient.swift */,
+			);
+			path = Client;
+			sourceTree = "<group>";
+		};
+		2D2D435BAAB2D6AD412FEA55 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				480D46EFA2562CD8026AAA72 /* OCIModels.swift */,
+				F6A646168C82116059292312 /* OCIReference.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		396E4815AA7AEC548FEC42E1 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				B50A40DEB718711DEE461E7A /* OCIRegistrySettings.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		3B6F457C88BABC5AA5D09C34 /* OCI */ = {
+			isa = PBXGroup;
+			children = (
+				2D2D435BAAB2D6AD412FEA55 /* Models */,
+				B84D498B9ADF8FAA8937DDB7 /* Util */,
+				801549F1AEB9EA7CEBE72C68 /* Auth */,
+				081F42A689C96341530A7577 /* Client */,
+				396E4815AA7AEC548FEC42E1 /* Settings */,
+				49274DA8BD7820AD3FA4197E /* Upload */,
+			);
+			path = OCI;
+			sourceTree = "<group>";
+		};
+		49274DA8BD7820AD3FA4197E /* Upload */ = {
+			isa = PBXGroup;
+			children = (
+				C8C34B5996B25A7258C6A595 /* VBUploadManager.swift */,
+			);
+			path = Upload;
+			sourceTree = "<group>";
+		};
+		801549F1AEB9EA7CEBE72C68 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				CB0346769CEB327B8FCCF64D /* OCIAuthHandler.swift */,
+				F931442282347B7F2B41DE9B /* OCICredentialStore.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		B84D498B9ADF8FAA8937DDB7 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				E2C444139E778B2C34E6876C /* StreamingSHA256.swift */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
 		F40A1E9B2C1873B90033E47D /* ReleaseTrains */ = {
 			isa = PBXGroup;
 			children = (
@@ -1323,6 +1444,7 @@
 				F453C4382DF0B7A5007EAD5F /* ResolveCommand.swift */,
 				F453C4672DF10181007EAD5F /* BlurHashCommand.swift */,
 				F453C4392DF0B7A5007EAD5F /* VCTool.swift */,
+				C93C47D187C1F8DBE7AC4795 /* RegistryCommand.swift */,
 			);
 			path = vctool;
 			sourceTree = "<group>";
@@ -1350,6 +1472,7 @@
 				F453C4882DF1CDA0007EAD5F /* DownloadBackend.swift */,
 				F453C49A2DF1D768007EAD5F /* SimulatedDownloadBackend.swift */,
 				F465C3B7284FA252006E9ED4 /* URLSessionDownloadBackend.swift */,
+				1BBD4EC28331D4C2471EF36D /* OCIDownloadBackend.swift */,
 			);
 			path = Download;
 			sourceTree = "<group>";
@@ -1690,8 +1813,16 @@
 				F41369AC29918576002CE8D3 /* VirtualBuddyGuestHelper */,
 				F4D3059D29B8DB700006E748 /* VirtualWormholeTests */,
 				F43B01162AD858FE00164CD1 /* DeepLinkSecurity */,
+				210185942F6D163600E05C70 /* VirtualCoreTests */,
 				F4BE9C4F27FF052100B648F8 /* Products */,
 				F4C189F12848F5F500335EC7 /* Frameworks */,
+				8167484199DEB6F531194C2C /* OCIRegistrySettingsView.swift */,
+				33624F7BAE6200718E12FA78 /* OCIPushView.swift */,
+				62604E689EF5532019569F84 /* OCIReferenceTests.swift */,
+				9DCA49E9BFD3976A907C3810 /* OCIModelsTests.swift */,
+				43FF4B6FA389A735EC01FDE6 /* StreamingSHA256Tests.swift */,
+				ED2740928E831BD3DC94CF65 /* OCIAuthTests.swift */,
+				804D4667B4FD9C589214845C /* OCIRegistrySettingsTests.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1706,6 +1837,7 @@
 				F41369AB29918576002CE8D3 /* VirtualBuddyGuestHelper.app */,
 				F4D3059C29B8DB700006E748 /* VirtualWormholeTests.xctest */,
 				F43B01152AD858FE00164CD1 /* DeepLinkSecurity.framework */,
+				210185932F6D163600E05C70 /* VirtualCoreTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1757,6 +1889,7 @@
 				F443620D29B79D6800745B43 /* GuestSupport */,
 				F4A21BEE28032F97001072B8 /* Models */,
 				F4BE9C8427FF13F600B648F8 /* Headers */,
+				3B6F457C88BABC5AA5D09C34 /* OCI */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -2065,6 +2198,29 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		210185922F6D163600E05C70 /* VirtualCoreTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 210185A12F6D163600E05C70 /* Build configuration list for PBXNativeTarget "VirtualCoreTests" */;
+			buildPhases = (
+				2101858F2F6D163600E05C70 /* Sources */,
+				210185902F6D163600E05C70 /* Frameworks */,
+				210185912F6D163600E05C70 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				210185992F6D163600E05C70 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				210185942F6D163600E05C70 /* VirtualCoreTests */,
+			);
+			name = VirtualCoreTests;
+			packageProductDependencies = (
+			);
+			productName = VirtualCoreTests;
+			productReference = 210185932F6D163600E05C70 /* VirtualCoreTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		F41369AA29918576002CE8D3 /* VirtualBuddyGuestHelper */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F41369B729918576002CE8D3 /* Build configuration list for PBXNativeTarget "VirtualBuddyGuestHelper" */;
@@ -2248,9 +2404,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1640;
+				LastSwiftUpdateCheck = 2630;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
+					210185922F6D163600E05C70 = {
+						CreatedOnToolsVersion = 26.3;
+					};
 					F41369AA29918576002CE8D3 = {
 						CreatedOnToolsVersion = 14.2;
 						LastSwiftMigration = 1420;
@@ -2316,11 +2475,19 @@
 				F4D3059B29B8DB700006E748 /* VirtualWormholeTests */,
 				F4C189DF2848F59F00335EC7 /* VirtualWormhole */,
 				F453C44F2DF0BCE3007EAD5F /* vctool */,
+				210185922F6D163600E05C70 /* VirtualCoreTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		210185912F6D163600E05C70 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F41369A929918576002CE8D3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2457,6 +2624,18 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		2101858F2F6D163600E05C70 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E544455ABC95755CA21DC0BC /* OCIReferenceTests.swift in Sources */,
+				AC634ECF96D95841601B1596 /* OCIModelsTests.swift in Sources */,
+				F86542BABB4CBB6DC55BB8D6 /* StreamingSHA256Tests.swift in Sources */,
+				A4D6496E825AAFAACBD1BFCD /* OCIAuthTests.swift in Sources */,
+				C96D439391A4AA466CEAAEB9 /* OCIRegistrySettingsTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F41369A729918576002CE8D3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2600,6 +2779,8 @@
 				F413697929917135002CE8D3 /* CGFloat+OnePixel.swift in Sources */,
 				F42C015E2888FC0C00EB15CD /* SettingsScreen.swift in Sources */,
 				F45502142DF394DC005582A4 /* VirtualBuddyInstallerInputView.swift in Sources */,
+				A4FD47748459FD7744A1E0EA /* OCIRegistrySettingsView.swift in Sources */,
+				CF2B4E4F86E7FBBE1689EBAC /* OCIPushView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2629,6 +2810,7 @@
 				F4BE9C5227FF052100B648F8 /* VirtualBuddyApp.swift in Sources */,
 				F43B014E2AD86BFA00164CD1 /* DeepLinkHandler.swift in Sources */,
 				F453C4232DF0B5B1007EAD5F /* VirtualBuddyEntryPoint.swift in Sources */,
+				12C0422D801A37D9BDF86D6C /* RegistryCommand.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2707,6 +2889,16 @@
 				F453C4212DF0B43D007EAD5F /* MobileDeviceFramework.swift in Sources */,
 				0196B45329292B2A00614EF1 /* LinuxVirtualMachineConfigurationHelper.swift in Sources */,
 				F465C3B2284F9666006E9ED4 /* VBRestoreImageInfo.swift in Sources */,
+				EFD34D828656797C1B662E25 /* OCIModels.swift in Sources */,
+				45BA402C8038C1FB3665AA62 /* OCIReference.swift in Sources */,
+				88DD4D86898080B82D340DE3 /* StreamingSHA256.swift in Sources */,
+				B0AB4BCAB958E45327990BAD /* OCIAuthHandler.swift in Sources */,
+				5FA04DF78DADBCC5D13A7DFF /* OCICredentialStore.swift in Sources */,
+				1FCA41F3AC4CB350C37721C8 /* OCIPullClient.swift in Sources */,
+				05464545A8C38D9447BDDA62 /* OCIPushClient.swift in Sources */,
+				1BD34760A04AA37CC61E2489 /* OCIRegistrySettings.swift in Sources */,
+				A9854A6C8FDC2DA837DD1E53 /* VBUploadManager.swift in Sources */,
+				F6AE4A739C4B162C025A9BB7 /* OCIDownloadBackend.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2760,6 +2952,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		210185992F6D163600E05C70 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F4BE9C6427FF053A00B648F8 /* VirtualCore */;
+			targetProxy = 210185982F6D163600E05C70 /* PBXContainerItemProxy */;
+		};
 		F413699D299179F8002CE8D3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F4BE9C6427FF053A00B648F8 /* VirtualCore */;
@@ -2838,6 +3035,169 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		2101859A2F6D163600E05C70 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = codes.rambo.VirtualCoreTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		2101859B2F6D163600E05C70 /* Debug_Managed */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = codes.rambo.VirtualCoreTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug_Managed;
+		};
+		2101859C2F6D163600E05C70 /* Beta_Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = codes.rambo.VirtualCoreTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Beta_Debug;
+		};
+		2101859D2F6D163600E05C70 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = codes.rambo.VirtualCoreTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		2101859E2F6D163600E05C70 /* Release_Managed */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = codes.rambo.VirtualCoreTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release_Managed;
+		};
+		2101859F2F6D163600E05C70 /* Beta_Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = codes.rambo.VirtualCoreTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Beta_Release;
+		};
+		210185A02F6D163600E05C70 /* Dev_Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = codes.rambo.VirtualCoreTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Dev_Release;
+		};
 		F40A1E872C1869680033E47D /* Beta_Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F4C1224E280715F200D359E2 /* Main.xcconfig */;
@@ -2938,7 +3298,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"VirtualBuddyGuest/Preview Content\"";
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -2969,7 +3329,7 @@
 				CODE_SIGN_ENTITLEMENTS = VirtualBuddyGuestHelper/VirtualBuddyGuestHelper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -2997,7 +3357,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3082,7 +3442,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = codes.rambo.VirtualWormholeTests;
@@ -3210,7 +3570,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"VirtualBuddyGuest/Preview Content\"";
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -3240,7 +3600,7 @@
 				CODE_SIGN_ENTITLEMENTS = VirtualBuddyGuestHelper/VirtualBuddyGuestHelper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -3267,7 +3627,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3349,7 +3709,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = codes.rambo.VirtualWormholeTests;
@@ -3394,7 +3754,7 @@
 				CODE_SIGN_ENTITLEMENTS = VirtualBuddyGuestHelper/VirtualBuddyGuestHelper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -3423,7 +3783,7 @@
 				CODE_SIGN_ENTITLEMENTS = VirtualBuddyGuestHelper/VirtualBuddyGuestHelper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -3452,7 +3812,7 @@
 				CODE_SIGN_ENTITLEMENTS = VirtualBuddyGuestHelper/VirtualBuddyGuestHelper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -3480,7 +3840,7 @@
 				CODE_SIGN_ENTITLEMENTS = VirtualBuddyGuestHelper/VirtualBuddyGuestHelper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -3507,7 +3867,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3542,7 +3902,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3577,7 +3937,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3611,7 +3971,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3844,7 +4204,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"VirtualBuddyGuest/Preview Content\"";
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -3874,7 +4234,7 @@
 				CODE_SIGN_ENTITLEMENTS = VirtualBuddyGuestHelper/VirtualBuddyGuestHelper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -3901,7 +4261,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3983,7 +4343,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = codes.rambo.VirtualWormholeTests;
@@ -4118,7 +4478,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"VirtualBuddyGuest/Preview Content\"";
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -4310,7 +4670,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"VirtualBuddyGuest/Preview Content\"";
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -4533,7 +4893,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"VirtualBuddy/Preview Content\"";
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -4558,7 +4918,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"VirtualBuddy/Preview Content\"";
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -4686,7 +5046,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"VirtualBuddyGuest/Preview Content\"";
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -4717,7 +5077,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"VirtualBuddyGuest/Preview Content\"";
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -4743,7 +5103,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = codes.rambo.VirtualWormholeTests;
@@ -4759,7 +5119,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = codes.rambo.VirtualWormholeTests;
@@ -4775,7 +5135,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = codes.rambo.VirtualWormholeTests;
@@ -4791,7 +5151,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8C7439RJLG;
+				DEVELOPMENT_TEAM = 25NQ367WU2;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = codes.rambo.VirtualWormholeTests;
@@ -4804,6 +5164,20 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		210185A12F6D163600E05C70 /* Build configuration list for PBXNativeTarget "VirtualCoreTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2101859A2F6D163600E05C70 /* Debug */,
+				2101859B2F6D163600E05C70 /* Debug_Managed */,
+				2101859C2F6D163600E05C70 /* Beta_Debug */,
+				2101859D2F6D163600E05C70 /* Release */,
+				2101859E2F6D163600E05C70 /* Release_Managed */,
+				2101859F2F6D163600E05C70 /* Beta_Release */,
+				210185A02F6D163600E05C70 /* Dev_Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		F41369B729918576002CE8D3 /* Build configuration list for PBXNativeTarget "VirtualBuddyGuestHelper" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

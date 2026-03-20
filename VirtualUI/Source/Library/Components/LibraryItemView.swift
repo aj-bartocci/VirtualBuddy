@@ -118,6 +118,9 @@ struct LibraryItemView: View {
         .contextMenu { contextMenuItems }
         .task(id: vm.name) { self.name = vm.name }
         .animation(isPressed ? .linear(duration: 0) : .snappy, value: isPressed)
+        .sheet(isPresented: $showPushSheet) {
+            OCIPushView(ipswURL: vm.bundleURL, suggestedTag: vm.name)
+        }
     }
 
     private func rename(_ newName: String) {
@@ -133,6 +136,8 @@ struct LibraryItemView: View {
     private var backgroundShape: some InsettableShape {
         RoundedRectangle(cornerRadius: 12, style: .continuous)
     }
+
+    @State private var showPushSheet = false
 
     @ViewBuilder
     private var contextMenuItems: some View {
@@ -156,6 +161,17 @@ struct LibraryItemView: View {
             Text("Rename")
         }
         .disabled(isVMBooted)
+
+        if OCIRegistryConfiguration.current.isEnabled {
+            Divider()
+
+            Button {
+                showPushSheet = true
+            } label: {
+                Label("Push to Registry", systemImage: "arrow.up.circle")
+            }
+            .disabled(isVMBooted)
+        }
 
         #if DEBUG
         Button {

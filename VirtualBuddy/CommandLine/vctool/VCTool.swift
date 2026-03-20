@@ -11,6 +11,7 @@ struct VCTool: AsyncParsableCommand {
             IPSWCommand.self,
             MobileDeviceCommand.self,
             BlurHashCommand.self,
+            RegistryCommand.self,
         ]
     )
 }
