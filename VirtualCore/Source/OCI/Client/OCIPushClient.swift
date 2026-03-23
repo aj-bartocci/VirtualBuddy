@@ -7,12 +7,19 @@ public final class OCIPushClient: @unchecked Sendable {
 
     private let logger = Logger(subsystem: "codes.rambo.VirtualBuddy", category: "OCIPushClient")
 
-    private let authHandler: OCIAuthHandler
+    let authHandler: OCIAuthHandler
     private let session: URLSession
     private var isCancelled = false
 
-    /// Chunk size for blob uploads (64 MB).
-    public static let defaultChunkSize = 64 * 1024 * 1024
+    /// Chunk size for blob uploads (4 MiB minus 1 KB safety margin).
+    /// GHCR enforces a strict 4 MiB limit on all request bodies
+    /// including chunked PATCH uploads.
+    public static let defaultChunkSize = (4 * 1024 * 1024) - 1024
+
+    /// Timeout for upload requests (5 minutes).
+    /// The finalize PUT can take a long time for large blobs as the registry
+    /// assembles all chunks before responding.
+    private static let uploadTimeout: TimeInterval = 300
 
     public init(authHandler: OCIAuthHandler, session: URLSession = .shared) {
         self.authHandler = authHandler
@@ -109,7 +116,7 @@ public final class OCIPushClient: @unchecked Sendable {
     // MARK: - Blob Operations
 
     /// Check if a blob exists in the registry.
-    private func blobExists(reference: OCIReference, digest: String, token: String) async throws -> Bool {
+    func blobExists(reference: OCIReference, digest: String, token: String) async throws -> Bool {
         let url = reference.blobURL(digest: digest)
 
         var request = URLRequest(url: url)
@@ -121,19 +128,23 @@ public final class OCIPushClient: @unchecked Sendable {
         return statusCode == 200
     }
 
-    /// Upload a file blob using chunked upload.
-    private func uploadBlob(
+    /// Upload a file blob using chunked PATCH uploads followed by a final PUT.
+    ///
+    /// GHCR enforces a strict 4 MiB per-request body limit, so chunks must be
+    /// well under that threshold.
+    func uploadBlob(
         reference: OCIReference,
         fileURL: URL,
         digest: String,
         fileSize: Int64,
-        chunkSize: Int,
+        chunkSize: Int = defaultChunkSize,
         progress: @escaping @Sendable (OCIProgress) -> Void
     ) async throws {
-        let token = try await authHandler.token(for: reference, action: "push,pull")
+        logger.info("uploadBlob: fileSize=\(fileSize), chunkSize=\(chunkSize), file=\(fileURL.lastPathComponent)")
 
         // Initiate upload
-        let uploadURL = try await initiateUpload(reference: reference, token: token)
+        let initialToken = try await authHandler.token(for: reference, action: "push,pull")
+        let uploadURL = try await initiateUpload(reference: reference, token: initialToken)
 
         // Upload in chunks
         let fileHandle = try FileHandle(forReadingFrom: fileURL)
@@ -145,6 +156,9 @@ public final class OCIPushClient: @unchecked Sendable {
         while bytesUploaded < fileSize {
             try checkCancelled()
 
+            // Refresh token for each chunk to avoid expiry during long uploads
+            let token = try await authHandler.token(for: reference, action: "push,pull")
+
             let remainingBytes = fileSize - bytesUploaded
             let thisChunkSize = min(Int64(chunkSize), remainingBytes)
             guard let chunkData = try fileHandle.read(upToCount: Int(thisChunkSize)), !chunkData.isEmpty else {
@@ -154,15 +168,27 @@ public final class OCIPushClient: @unchecked Sendable {
             let isLastChunk = (bytesUploaded + Int64(chunkData.count)) >= fileSize
 
             if isLastChunk {
-                // Final chunk: PUT with digest to complete
-                try await finalizeUpload(
-                    uploadURL: currentUploadURL,
-                    data: chunkData,
-                    digest: digest,
-                    offset: bytesUploaded,
-                    totalSize: fileSize,
-                    token: token
-                )
+                // Final chunk: PUT with digest to complete.
+                // On timeout, check if the registry committed the blob anyway.
+                do {
+                    try await finalizeUpload(
+                        uploadURL: currentUploadURL,
+                        data: chunkData,
+                        digest: digest,
+                        offset: bytesUploaded,
+                        totalSize: fileSize,
+                        token: token
+                    )
+                } catch let error as URLError where error.code == .timedOut {
+                    logger.warning("Finalize PUT timed out, checking if blob was committed...")
+                    let freshToken = try await authHandler.token(for: reference, action: "push,pull")
+                    let committed = try await blobExists(reference: reference, digest: digest, token: freshToken)
+                    if committed {
+                        logger.info("Blob was committed despite timeout")
+                    } else {
+                        throw OCIError.uploadFailed("Upload finalize timed out and blob was not committed. Try pushing again — already-uploaded chunks will be skipped.")
+                    }
+                }
             } else {
                 // Intermediate chunk: PATCH
                 currentUploadURL = try await uploadChunk(
@@ -181,8 +207,51 @@ public final class OCIPushClient: @unchecked Sendable {
         logger.info("Blob upload complete: \(digest)")
     }
 
+    /// PATCH to upload a chunk of data.
+    private func uploadChunk(
+        uploadURL: URL,
+        data: Data,
+        offset: Int64,
+        totalSize: Int64,
+        token: String
+    ) async throws -> URL {
+        logger.info("PATCH chunk: \(data.count) bytes (offset \(offset), total \(totalSize))")
+        var request = URLRequest(url: uploadURL, timeoutInterval: Self.uploadTimeout)
+        request.httpMethod = "PATCH"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
+        request.setValue(String(data.count), forHTTPHeaderField: "Content-Length")
+        request.setValue("\(offset)-\(offset + Int64(data.count) - 1)", forHTTPHeaderField: "Content-Range")
+        request.httpBody = data
+
+        let (responseData, response) = try await retryOnAuthFailure(request: request, reference: nil, token: token) {
+            try await self.session.data(for: $0)
+        }
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw OCIError.uploadFailed("Invalid response during chunk upload")
+        }
+
+        guard httpResponse.statusCode == 202 else {
+            let body = String(data: responseData, encoding: .utf8)
+            throw OCIError.httpError(statusCode: httpResponse.statusCode, body: body)
+        }
+
+        // Get next upload URL from Location header
+        if let location = httpResponse.value(forHTTPHeaderField: "Location") {
+            if location.hasPrefix("http") {
+                return URL(string: location)!
+            } else {
+                return URL(string: location, relativeTo: uploadURL)?.absoluteURL ?? uploadURL
+            }
+        }
+
+        return uploadURL
+    }
+
     /// Upload a small blob from in-memory data (used for config blobs).
-    private func uploadBlobFromData(reference: OCIReference, data: Data, digest: String) async throws {
+    func uploadBlobFromData(reference: OCIReference, data: Data, digest: String) async throws {
+        logger.info("uploadBlobFromData: \(data.count) bytes")
         let token = try await authHandler.token(for: reference, action: "push,pull")
         let uploadURL = try await initiateUpload(reference: reference, token: token)
 
@@ -222,55 +291,18 @@ public final class OCIPushClient: @unchecked Sendable {
         }
 
         // Location may be relative or absolute
-        if location.hasPrefix("http") {
-            return URL(string: location)!
+        if let absoluteURL = URL(string: location), absoluteURL.scheme != nil {
+            return absoluteURL
         } else {
-            return reference.apiBaseURL.appendingPathComponent(location)
-        }
-    }
-
-    /// PATCH to upload a chunk of data.
-    private func uploadChunk(
-        uploadURL: URL,
-        data: Data,
-        offset: Int64,
-        totalSize: Int64,
-        token: String
-    ) async throws -> URL {
-        var request = URLRequest(url: uploadURL)
-        request.httpMethod = "PATCH"
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
-        request.setValue(String(data.count), forHTTPHeaderField: "Content-Length")
-        request.setValue("\(offset)-\(offset + Int64(data.count) - 1)", forHTTPHeaderField: "Content-Range")
-        request.httpBody = data
-
-        let (responseData, response) = try await retryOnAuthFailure(request: request, reference: nil, token: token) {
-            try await self.session.data(for: $0)
-        }
-
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw OCIError.uploadFailed("Invalid response during chunk upload")
-        }
-
-        guard httpResponse.statusCode == 202 else {
-            let body = String(data: responseData, encoding: .utf8)
-            throw OCIError.httpError(statusCode: httpResponse.statusCode, body: body)
-        }
-
-        // Get next upload URL from Location header
-        if let location = httpResponse.value(forHTTPHeaderField: "Location") {
-            if location.hasPrefix("http") {
-                return URL(string: location)!
-            } else {
-                return URL(string: location, relativeTo: uploadURL)?.absoluteURL ?? uploadURL
+            // Resolve relative URL against the API base
+            guard let resolved = URL(string: location, relativeTo: reference.apiBaseURL) else {
+                throw OCIError.uploadFailed("Could not resolve upload Location: \(location)")
             }
+            return resolved.absoluteURL
         }
-
-        return uploadURL
     }
 
-    /// PUT to finalize the upload with the final chunk and digest.
+    /// PUT to finalize the upload with in-memory data and digest (used for small blobs).
     private func finalizeUpload(
         uploadURL: URL,
         data: Data,
@@ -279,13 +311,14 @@ public final class OCIPushClient: @unchecked Sendable {
         totalSize: Int64,
         token: String
     ) async throws {
+        logger.info("PUT finalize: \(data.count) bytes (offset \(offset), total \(totalSize), digest \(digest))")
         // Append digest query parameter
         var components = URLComponents(url: uploadURL, resolvingAgainstBaseURL: true)!
         var queryItems = components.queryItems ?? []
         queryItems.append(URLQueryItem(name: "digest", value: digest))
         components.queryItems = queryItems
 
-        var request = URLRequest(url: components.url!)
+        var request = URLRequest(url: components.url!, timeoutInterval: Self.uploadTimeout)
         request.httpMethod = "PUT"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
@@ -310,7 +343,7 @@ public final class OCIPushClient: @unchecked Sendable {
     // MARK: - Manifest
 
     /// PUT a manifest to the registry.
-    private func pushManifest(reference: OCIReference, manifest: OCIManifest) async throws {
+    func pushManifest(reference: OCIReference, manifest: OCIManifest) async throws {
         let token = try await authHandler.token(for: reference, action: "push,pull")
         let url = reference.manifestURL
 
@@ -338,12 +371,12 @@ public final class OCIPushClient: @unchecked Sendable {
 
     // MARK: - Helpers
 
-    private func fileSize(of url: URL) throws -> Int64 {
+    func fileSize(of url: URL) throws -> Int64 {
         let attrs = try FileManager.default.attributesOfItem(atPath: url.path)
         return Int64(attrs[.size] as? UInt64 ?? 0)
     }
 
-    private func checkCancelled() throws {
+    func checkCancelled() throws {
         if isCancelled { throw OCIError.cancelled }
     }
 

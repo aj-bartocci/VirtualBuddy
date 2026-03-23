@@ -89,6 +89,11 @@ public enum OCIMediaType {
     public static let imageManifest = "application/vnd.oci.image.manifest.v1+json"
     public static let ipswLayer = "application/vnd.virtualbuddy.ipsw.v1"
     public static let vbConfig = "application/vnd.virtualbuddy.config.v1+json"
+
+    // VM bundle types
+    public static let vmBundleConfig = "application/vnd.virtualbuddy.vm-config.v1+json"
+    public static let vmDiskLayer = "application/vnd.virtualbuddy.vm-disk.v1.lzfse"
+    public static let vmFileLayer = "application/vnd.virtualbuddy.vm-file.v1"
 }
 
 // MARK: - Progress
@@ -103,6 +108,9 @@ public struct OCIProgress: Sendable {
         case uploading
         case pushingManifest
         case verifying
+        case compressing
+        case decompressing
+        case assembling
     }
 
     public var phase: Phase
@@ -131,6 +139,8 @@ public enum OCIError: LocalizedError {
     case digestMismatch(expected: String, actual: String)
     case uploadFailed(String)
     case cancelled
+    case incompatibleFormat(String)
+    case bundleAssemblyFailed(String)
 
     public var errorDescription: String? {
         switch self {
@@ -149,6 +159,10 @@ public enum OCIError: LocalizedError {
             return "Upload failed: \(msg)"
         case .cancelled:
             return "Operation cancelled"
+        case .incompatibleFormat(let msg):
+            return "Incompatible format: \(msg)"
+        case .bundleAssemblyFailed(let msg):
+            return "Bundle assembly failed: \(msg)"
         }
     }
 }

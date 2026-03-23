@@ -119,7 +119,7 @@ struct LibraryItemView: View {
         .task(id: vm.name) { self.name = vm.name }
         .animation(isPressed ? .linear(duration: 0) : .snappy, value: isPressed)
         .sheet(isPresented: $showPushSheet) {
-            OCIPushView(defaultDirectory: vm.bundleURL, suggestedTag: vm.name)
+            OCIPushView(defaultDirectory: vm.bundleURL, suggestedTag: vm.name, bundleURL: vm.bundleURL)
         }
     }
 

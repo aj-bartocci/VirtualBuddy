@@ -19,11 +19,11 @@ struct RegistryCommand: AsyncParsableCommand {
     struct PushCommand: AsyncParsableCommand {
         static let configuration = CommandConfiguration(
             commandName: "push",
-            abstract: "Push an IPSW file to an OCI registry."
+            abstract: "Push an IPSW file or VM bundle to an OCI registry."
         )
 
-        @Argument(help: "Path to the IPSW file to push.")
-        var ipswPath: String
+        @Argument(help: "Path to the IPSW file or .vbvm bundle to push.")
+        var path: String
 
         @Option(name: .long, help: "OCI reference to push to (e.g., ghcr.io/org/repo:tag).")
         var to: String
@@ -40,8 +40,11 @@ struct RegistryCommand: AsyncParsableCommand {
         @Option(name: .long, help: "OS version (e.g., \"15.2\"). Auto-detected from IPSW if not specified.")
         var version: String?
 
+        @Flag(name: .long, help: "Force treating the path as a VM bundle.")
+        var bundle: Bool = false
+
         func run() async throws {
-            let ipswURL = try ipswPath.resolvedURL.ensureExistingFile()
+            let sourceURL = URL(filePath: path.resolvedPath)
             let reference = try OCIReference(parsing: to)
 
             // Resolve token
@@ -51,7 +54,22 @@ struct RegistryCommand: AsyncParsableCommand {
                 try credentialStore.store(.pat(resolvedToken), for: reference.registry)
             }
 
-            // Build metadata
+            let authHandler = OCIAuthHandler(credentialStore: credentialStore)
+            let pushClient = OCIPushClient(authHandler: authHandler)
+
+            // Determine if this is a bundle or IPSW
+            let isBundle = bundle || sourceURL.pathExtension == VBVirtualMachine.bundleExtension || sourceURL.isExistingDirectory
+
+            if isBundle {
+                try await pushBundle(sourceURL: sourceURL, reference: reference, pushClient: pushClient)
+            } else {
+                try await pushIPSW(sourceURL: sourceURL, reference: reference, pushClient: pushClient)
+            }
+        }
+
+        private func pushIPSW(sourceURL: URL, reference: OCIReference, pushClient: OCIPushClient) async throws {
+            let ipswURL = try sourceURL.ensureExistingFile()
+
             let metadata = VBImageMetadata(
                 build: build ?? reference.tag ?? "unknown",
                 version: version ?? "unknown",
@@ -60,12 +78,9 @@ struct RegistryCommand: AsyncParsableCommand {
 
             fputs("Pushing \(ipswURL.lastPathComponent) to \(reference.description)...\n", stderr)
 
-            let authHandler = OCIAuthHandler(credentialStore: credentialStore)
-            let client = OCIPushClient(authHandler: authHandler)
-
             var lastPhase: OCIProgress.Phase?
 
-            try await client.push(
+            try await pushClient.push(
                 reference: reference,
                 ipswURL: ipswURL,
                 metadata: metadata
@@ -94,6 +109,48 @@ struct RegistryCommand: AsyncParsableCommand {
 
             fputs("\n\n✅ Push complete: \(reference.description)\n", stderr)
         }
+
+        private func pushBundle(sourceURL: URL, reference: OCIReference, pushClient: OCIPushClient) async throws {
+            guard sourceURL.isExistingDirectory else {
+                throw "Path is not a directory: \(sourceURL.path)"
+            }
+
+            fputs("Pushing VM bundle \(sourceURL.lastPathComponent) to \(reference.description)...\n", stderr)
+
+            let bundlePushClient = OCIVMBundlePushClient(pushClient: pushClient)
+
+            var lastPhase: OCIProgress.Phase?
+
+            try await bundlePushClient.pushBundle(
+                bundleURL: sourceURL,
+                reference: reference
+            ) { progress in
+                if progress.phase != lastPhase {
+                    lastPhase = progress.phase
+                    switch progress.phase {
+                    case .compressing:
+                        fputs("\nCompressing disk images...\n", stderr)
+                    case .hashing:
+                        fputs("\nHashing...\n", stderr)
+                    case .uploading:
+                        fputs("\nUploading...\n", stderr)
+                    case .pushingManifest:
+                        fputs("\nPushing manifest...\n", stderr)
+                    default:
+                        break
+                    }
+                }
+
+                if progress.totalBytes > 0 {
+                    let percent = Int(progress.fractionCompleted * 100)
+                    let mb = progress.bytesCompleted / (1024 * 1024)
+                    let totalMB = progress.totalBytes / (1024 * 1024)
+                    fputs("\r  \(percent)%  \(mb)/\(totalMB) MB", stderr)
+                }
+            }
+
+            fputs("\n\n✅ Bundle push complete: \(reference.description)\n", stderr)
+        }
     }
 
     // MARK: - Pull
@@ -101,7 +158,7 @@ struct RegistryCommand: AsyncParsableCommand {
     struct PullCommand: AsyncParsableCommand {
         static let configuration = CommandConfiguration(
             commandName: "pull",
-            abstract: "Pull an IPSW from an OCI registry."
+            abstract: "Pull an IPSW or VM bundle from an OCI registry."
         )
 
         @Argument(help: "OCI reference to pull (e.g., ghcr.io/org/repo:tag).")
@@ -113,9 +170,11 @@ struct RegistryCommand: AsyncParsableCommand {
         @Option(name: .long, help: "Registry authentication token (PAT).")
         var token: String?
 
+        @Flag(name: .long, help: "Place the VM bundle directly in VirtualBuddy's library path.")
+        var library: Bool = false
+
         func run() async throws {
             let ref = try OCIReference(parsing: reference)
-            let outputDir = try output.resolvedURL.ensureExistingDirectory(createIfNeeded: true)
 
             let resolvedToken = try resolveToken(token)
             let credentialStore = OCICredentialStore()
@@ -123,14 +182,28 @@ struct RegistryCommand: AsyncParsableCommand {
                 try credentialStore.store(.pat(resolvedToken), for: ref.registry)
             }
 
+            let authHandler = OCIAuthHandler(credentialStore: credentialStore)
+            let pullClient = OCIPullClient(authHandler: authHandler)
+
             fputs("Pulling \(ref.description)...\n", stderr)
 
-            let authHandler = OCIAuthHandler(credentialStore: credentialStore)
-            let client = OCIPullClient(authHandler: authHandler)
+            // Fetch manifest to detect artifact type
+            let manifest = try await pullClient.pullManifest(reference: ref)
+            let isVMBundle = manifest.config.mediaType == OCIMediaType.vmBundleConfig
+
+            if isVMBundle {
+                try await pullVMBundle(ref: ref, manifest: manifest, pullClient: pullClient, authHandler: authHandler)
+            } else {
+                try await pullIPSW(ref: ref, pullClient: pullClient)
+            }
+        }
+
+        private func pullIPSW(ref: OCIReference, pullClient: OCIPullClient) async throws {
+            let outputDir = try output.resolvedURL.ensureExistingDirectory(createIfNeeded: true)
 
             var lastPhase: OCIProgress.Phase?
 
-            let localURL = try await client.pull(
+            let localURL = try await pullClient.pull(
                 reference: ref,
                 destinationDirectory: outputDir
             ) { progress in
@@ -157,9 +230,63 @@ struct RegistryCommand: AsyncParsableCommand {
             }
 
             fputs("\n✅ Downloaded to: \(localURL.path)\n", stderr)
-
-            // Print path to stdout for scripting
             print(localURL.path)
+        }
+
+        private func pullVMBundle(ref: OCIReference, manifest: OCIManifest, pullClient: OCIPullClient, authHandler: OCIAuthHandler) async throws {
+            let outputDir: URL
+            if library {
+                // Use VirtualBuddy's default VM library path
+                let libraryPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                    .appendingPathComponent("VirtualBuddy")
+                try FileManager.default.createDirectory(at: libraryPath, withIntermediateDirectories: true)
+                outputDir = libraryPath
+            } else {
+                outputDir = try output.resolvedURL.ensureExistingDirectory(createIfNeeded: true)
+            }
+
+            fputs("Detected VM bundle artifact.\n", stderr)
+
+            let bundlePullClient = OCIVMBundlePullClient(pullClient: pullClient, authHandler: authHandler)
+
+            var lastPhase: OCIProgress.Phase?
+
+            let bundleURL = try await bundlePullClient.pullBundle(
+                reference: ref,
+                destinationDirectory: outputDir,
+                existingManifest: manifest
+            ) { progress in
+                if progress.phase != lastPhase {
+                    lastPhase = progress.phase
+                    switch progress.phase {
+                    case .fetchingManifest:
+                        fputs("Fetching manifest...\n", stderr)
+                    case .downloading:
+                        fputs("Downloading layers...\n", stderr)
+                    case .decompressing:
+                        fputs("\nDecompressing disk images...\n", stderr)
+                    case .verifying:
+                        fputs("\nVerifying...\n", stderr)
+                    case .assembling:
+                        fputs("Assembling VM bundle...\n", stderr)
+                    default:
+                        break
+                    }
+                }
+
+                if progress.totalBytes > 0 {
+                    let percent = Int(progress.fractionCompleted * 100)
+                    let mb = progress.bytesCompleted / (1024 * 1024)
+                    let totalMB = progress.totalBytes / (1024 * 1024)
+                    fputs("\r  \(percent)%  \(mb)/\(totalMB) MB", stderr)
+                }
+            }
+
+            fputs("\n✅ VM bundle assembled at: \(bundleURL.path)\n", stderr)
+            if library {
+                fputs("The VM should appear in VirtualBuddy's library automatically.\n", stderr)
+            }
+            print(bundleURL.path)
         }
     }
 

@@ -43,6 +43,11 @@ public final class OCICatalogProvider: @unchecked Sendable {
             do {
                 let tagRef = OCIReference(registry: reference.registry, repository: reference.repository, tag: tag)
                 let image = try await fetchImageMetadata(reference: tagRef)
+                // VM bundles are pulled via the dedicated Pull VM flow, not the installer
+                guard !image.isVMBundle else {
+                    logger.info("Skipping VM bundle tag \(tag) from restore image catalog")
+                    continue
+                }
                 images.append(image)
             } catch {
                 logger.warning("Failed to fetch metadata for tag \(tag): \(error, privacy: .public)")
@@ -91,9 +96,16 @@ public final class OCICatalogProvider: @unchecked Sendable {
 
         let manifest = try JSONDecoder().decode(OCIManifest.self, from: data)
 
+        // Detect artifact type from config media type
+        let isVMBundle = manifest.config.mediaType == OCIMediaType.vmBundleConfig
+        let artifactType = isVMBundle ? "vm-bundle" : "ipsw"
+
         // Try to fetch config blob for richer metadata
         var metadata: VBImageMetadata?
-        if manifest.config.mediaType == OCIMediaType.vbConfig {
+        var bundleMetadata: VBVMBundleMetadata?
+        if isVMBundle {
+            bundleMetadata = try? await fetchVMBundleConfigBlob(reference: reference, descriptor: manifest.config)
+        } else if manifest.config.mediaType == OCIMediaType.vbConfig {
             metadata = try? await fetchConfigBlob(reference: reference, descriptor: manifest.config)
         }
 
@@ -105,16 +117,21 @@ public final class OCICatalogProvider: @unchecked Sendable {
         let version = metadata?.version
             ?? manifest.annotations?["org.virtualbuddy.version"]
             ?? tag
-        let name = metadata?.name
-            ?? manifest.annotations?["org.opencontainers.image.title"]
-            ?? "OCI: \(tag)"
+        let name: String
+        if let bundleMetadata {
+            name = bundleMetadata.vmName
+        } else {
+            name = metadata?.name
+                ?? manifest.annotations?["org.opencontainers.image.title"]
+                ?? "OCI: \(tag)"
+        }
 
-        let layerSize = manifest.layers.first?.size ?? 0
+        let layerSize = manifest.layers.reduce(Int64(0)) { $0 + $1.size }
 
         return RestoreImage(
             id: "oci-\(reference.registry)-\(reference.repository)-\(tag)",
             group: CatalogGroup.ociGroup.id,
-            channel: CatalogChannel.ociChannel.id,
+            channel: isVMBundle ? CatalogChannel.ociVMBundleChannel.id : CatalogChannel.ociChannel.id,
             requirements: RequirementSet.ociDefault.id,
             name: name,
             build: build,
@@ -122,7 +139,8 @@ public final class OCICatalogProvider: @unchecked Sendable {
             mobileDeviceMinVersion: SoftwareVersion(string: metadata?.mobileDeviceMinVersion ?? "") ?? SoftwareVersion(major: 0, minor: 0, patch: 0),
             url: reference.asURL,
             downloadSize: UInt64(layerSize),
-            ociReference: reference.description
+            ociReference: reference.description,
+            ociArtifactType: artifactType
         )
     }
 
@@ -136,6 +154,20 @@ public final class OCICatalogProvider: @unchecked Sendable {
         let (data, _) = try await session.data(for: request)
 
         return try JSONDecoder().decode(VBImageMetadata.self, from: data)
+    }
+
+    private func fetchVMBundleConfigBlob(reference: OCIReference, descriptor: OCIDescriptor) async throws -> VBVMBundleMetadata {
+        let token = try await authHandler.token(for: reference, action: "pull")
+        let url = reference.blobURL(digest: descriptor.digest)
+
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+
+        let (data, _) = try await session.data(for: request)
+
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try decoder.decode(VBVMBundleMetadata.self, from: data)
     }
 }
 
@@ -159,6 +191,14 @@ public extension CatalogChannel {
         name: "Registry",
         note: "Images from OCI registry",
         icon: "shippingbox"
+    )
+
+    /// Channel for OCI VM bundle artifacts.
+    static let ociVMBundleChannel = CatalogChannel(
+        id: "oci-vm-bundle",
+        name: "VM Bundles",
+        note: "Pre-configured VM bundles from OCI registry",
+        icon: "shippingbox.fill"
     )
 }
 

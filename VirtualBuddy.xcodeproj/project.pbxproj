@@ -25,6 +25,11 @@
 /* Begin PBXBuildFile section */
 		0196B45329292B2A00614EF1 /* LinuxVirtualMachineConfigurationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0196B45229292B2A00614EF1 /* LinuxVirtualMachineConfigurationHelper.swift */; };
 		05464545A8C38D9447BDDA62 /* OCIPushClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334F4E4E82A344BD4221E767 /* OCIPushClient.swift */; };
+		0A1B4C3D9E2F7A8B5C6D0E1F /* VBVMBundleMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F7A8B9C0D1E2F /* VBVMBundleMetadata.swift */; };
+		0B2C4D3E9F1A8B7C6D5E0F2A /* DiskCompressor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B3C4D5E6F1A8B9C0D2E3F4A /* DiskCompressor.swift */; };
+		0C3D4E4F9A2B8C7D6E5F1A3B /* OCIVMBundlePushClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C4D5E6F1A2B8C9D0E3F4A5B /* OCIVMBundlePushClient.swift */; };
+		0D4E5F4A9B3C8D7E6F1A2B4C /* OCIVMBundlePullClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5E6F1A2B3C8D9E0F4A5B6C /* OCIVMBundlePullClient.swift */; };
+		0E5F6A4B9C4D8E7F1A2B3C5D /* OCIPullVMView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6F1A2B3C4D8E9F0A5B6C7D /* OCIPullVMView.swift */; };
 		12C0422D801A37D9BDF86D6C /* RegistryCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93C47D187C1F8DBE7AC4795 /* RegistryCommand.swift */; };
 		1BD34760A04AA37CC61E2489 /* OCIRegistrySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50A40DEB718711DEE461E7A /* OCIRegistrySettings.swift */; };
 		1FCA41F3AC4CB350C37721C8 /* OCIPullClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5784EE991F2D80F47B6B508 /* OCIPullClient.swift */; };
@@ -572,10 +577,15 @@
 /* Begin PBXFileReference section */
 		0196B45229292B2A00614EF1 /* LinuxVirtualMachineConfigurationHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinuxVirtualMachineConfigurationHelper.swift; sourceTree = "<group>"; };
 		04CF439C8F2BF811C0B638F5 /* OCICatalogProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCICatalogProvider.swift; path = VirtualCore/Source/OCI/Client/OCICatalogProvider.swift; sourceTree = SOURCE_ROOT; };
+		1A2B3C4D5E6F7A8B9C0D1E2F /* VBVMBundleMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VBVMBundleMetadata.swift; path = VirtualCore/Source/OCI/Models/VBVMBundleMetadata.swift; sourceTree = SOURCE_ROOT; };
 		1BBD4EC28331D4C2471EF36D /* OCIDownloadBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIDownloadBackend.swift; path = VirtualCore/Source/Restore/Download/OCIDownloadBackend.swift; sourceTree = SOURCE_ROOT; };
+		2B3C4D5E6F1A8B9C0D2E3F4A /* DiskCompressor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DiskCompressor.swift; path = VirtualCore/Source/OCI/Util/DiskCompressor.swift; sourceTree = SOURCE_ROOT; };
 		210185932F6D163600E05C70 /* VirtualCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VirtualCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		334F4E4E82A344BD4221E767 /* OCIPushClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIPushClient.swift; path = VirtualCore/Source/OCI/Client/OCIPushClient.swift; sourceTree = SOURCE_ROOT; };
 		33624F7BAE6200718E12FA78 /* OCIPushView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIPushView.swift; path = VirtualUI/Source/OCI/OCIPushView.swift; sourceTree = SOURCE_ROOT; };
+		3C4D5E6F1A2B8C9D0E3F4A5B /* OCIVMBundlePushClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIVMBundlePushClient.swift; path = VirtualCore/Source/OCI/Client/OCIVMBundlePushClient.swift; sourceTree = SOURCE_ROOT; };
+		4D5E6F1A2B3C8D9E0F4A5B6C /* OCIVMBundlePullClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIVMBundlePullClient.swift; path = VirtualCore/Source/OCI/Client/OCIVMBundlePullClient.swift; sourceTree = SOURCE_ROOT; };
+		5E6F1A2B3C4D8E9F0A5B6C7D /* OCIPullVMView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIPullVMView.swift; path = VirtualUI/Source/OCI/OCIPullVMView.swift; sourceTree = SOURCE_ROOT; };
 		43FF4B6FA389A735EC01FDE6 /* StreamingSHA256Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StreamingSHA256Tests.swift; path = VirtualCoreTests/StreamingSHA256Tests.swift; sourceTree = SOURCE_ROOT; };
 		480D46EFA2562CD8026AAA72 /* OCIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OCIModels.swift; path = VirtualCore/Source/OCI/Models/OCIModels.swift; sourceTree = SOURCE_ROOT; };
 		4BA6BE7C293D22E500F396AE /* VirtualMachineConfigurationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualMachineConfigurationHelper.swift; sourceTree = "<group>"; };
@@ -1001,6 +1011,8 @@
 			children = (
 				B5784EE991F2D80F47B6B508 /* OCIPullClient.swift */,
 				334F4E4E82A344BD4221E767 /* OCIPushClient.swift */,
+				3C4D5E6F1A2B8C9D0E3F4A5B /* OCIVMBundlePushClient.swift */,
+				4D5E6F1A2B3C8D9E0F4A5B6C /* OCIVMBundlePullClient.swift */,
 			);
 			path = Client;
 			sourceTree = "<group>";
@@ -1010,6 +1022,7 @@
 			children = (
 				480D46EFA2562CD8026AAA72 /* OCIModels.swift */,
 				F6A646168C82116059292312 /* OCIReference.swift */,
+				1A2B3C4D5E6F7A8B9C0D1E2F /* VBVMBundleMetadata.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1056,6 +1069,7 @@
 			isa = PBXGroup;
 			children = (
 				E2C444139E778B2C34E6876C /* StreamingSHA256.swift */,
+				2B3C4D5E6F1A8B9C0D2E3F4A /* DiskCompressor.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -1820,6 +1834,7 @@
 				F4C189F12848F5F500335EC7 /* Frameworks */,
 				8167484199DEB6F531194C2C /* OCIRegistrySettingsView.swift */,
 				33624F7BAE6200718E12FA78 /* OCIPushView.swift */,
+				5E6F1A2B3C4D8E9F0A5B6C7D /* OCIPullVMView.swift */,
 				62604E689EF5532019569F84 /* OCIReferenceTests.swift */,
 				9DCA49E9BFD3976A907C3810 /* OCIModelsTests.swift */,
 				43FF4B6FA389A735EC01FDE6 /* StreamingSHA256Tests.swift */,
@@ -2784,6 +2799,7 @@
 				F45502142DF394DC005582A4 /* VirtualBuddyInstallerInputView.swift in Sources */,
 				A4FD47748459FD7744A1E0EA /* OCIRegistrySettingsView.swift in Sources */,
 				CF2B4E4F86E7FBBE1689EBAC /* OCIPushView.swift in Sources */,
+				0E5F6A4B9C4D8E7F1A2B3C5D /* OCIPullVMView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2903,6 +2919,10 @@
 				A9854A6C8FDC2DA837DD1E53 /* VBUploadManager.swift in Sources */,
 				F6AE4A739C4B162C025A9BB7 /* OCIDownloadBackend.swift in Sources */,
 				56D7484B8403971C3266C7AA /* OCICatalogProvider.swift in Sources */,
+				0A1B4C3D9E2F7A8B5C6D0E1F /* VBVMBundleMetadata.swift in Sources */,
+				0B2C4D3E9F1A8B7C6D5E0F2A /* DiskCompressor.swift in Sources */,
+				0C3D4E4F9A2B8C7D6E5F1A3B /* OCIVMBundlePushClient.swift in Sources */,
+				0D4E5F4A9B3C8D7E6F1A2B4C /* OCIVMBundlePullClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

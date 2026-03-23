@@ -101,7 +101,7 @@ public final class OCIDownloadBackend: NSObject, DownloadBackend {
             state = .preCheck("Verifying integrity…")
         case .downloading:
             updateDownloadProgress(progress)
-        case .uploading, .pushingManifest:
+        case .uploading, .pushingManifest, .compressing, .decompressing, .assembling:
             break // Not applicable for download
         case .verifying:
             state = .preCheck("Verifying download…")

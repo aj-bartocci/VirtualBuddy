@@ -2,7 +2,7 @@ import SwiftUI
 import VirtualCore
 import UniformTypeIdentifiers
 
-/// View for pushing (uploading) a VM image to an OCI registry.
+/// View for pushing (uploading) a VM image or bundle to an OCI registry.
 /// Presented as a sheet from the VM library context menu.
 public struct OCIPushView: View {
     @StateObject private var uploadManager = VBUploadManager()
@@ -14,19 +14,25 @@ public struct OCIPushView: View {
     @State private var showFilePicker = false
 
     private let defaultDirectory: URL?
+    /// When set, the view pushes a VM bundle instead of a single file.
+    private let bundleURL: URL?
 
-    public init(defaultDirectory: URL? = nil, suggestedTag: String? = nil) {
+    public init(defaultDirectory: URL? = nil, suggestedTag: String? = nil, bundleURL: URL? = nil) {
         self.defaultDirectory = defaultDirectory
+        self.bundleURL = bundleURL
         _selectedFileURL = State(initialValue: nil)
         _tag = State(initialValue: suggestedTag ?? "")
     }
+
+    private var isBundleMode: Bool { bundleURL != nil }
 
     private var reference: OCIReference {
         config.reference(tag: tag)
     }
 
     private var canPush: Bool {
-        selectedFileURL != nil && !config.registryURL.isEmpty && !config.repository.isEmpty && !tag.isEmpty
+        let hasSource = isBundleMode || selectedFileURL != nil
+        return hasSource && !config.registryURL.isEmpty && !config.repository.isEmpty && !tag.isEmpty
     }
 
     public var body: some View {
@@ -34,7 +40,11 @@ public struct OCIPushView: View {
             ScrollView(.vertical) {
                 VStack(alignment: .leading, spacing: 20) {
                     headerSection
-                    fileSection
+                    if isBundleMode {
+                        bundleSection
+                    } else {
+                        fileSection
+                    }
                     configSection
                     progressSection
                 }
@@ -69,8 +79,34 @@ public struct OCIPushView: View {
 
     @ViewBuilder
     private var headerSection: some View {
-        Text("Push to Registry")
+        Text(isBundleMode ? "Push VM Bundle to Registry" : "Push to Registry")
             .font(.title2.weight(.semibold))
+    }
+
+    @ViewBuilder
+    private var bundleSection: some View {
+        if let bundleURL {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("VM Bundle")
+                    .font(.callout.weight(.medium))
+
+                HStack(spacing: 6) {
+                    Image(systemName: "shippingbox")
+                        .foregroundStyle(.secondary)
+                    Text(bundleURL.lastPathComponent)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }
+                .padding(10)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 8))
+
+                Text("The VM's disk images will be compressed before uploading. Screenshots and thumbnails are excluded.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .disabled(isInProgress)
+        }
     }
 
     @ViewBuilder
@@ -151,9 +187,18 @@ public struct OCIPushView: View {
         switch uploadManager.uploadState {
         case .idle:
             EmptyView()
+        case .compressing(let progress):
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Compressing disk images...")
+                    .font(.callout.weight(.medium))
+                ProgressView(value: progress)
+                Text("\(Int(progress * 100))%")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
         case .hashing(let progress):
             VStack(alignment: .leading, spacing: 8) {
-                Text("Hashing file...")
+                Text("Hashing...")
                     .font(.callout.weight(.medium))
                 ProgressView(value: progress)
                 Text("\(Int(progress * 100))%")
@@ -247,7 +292,7 @@ public struct OCIPushView: View {
 
     private var isInProgress: Bool {
         switch uploadManager.uploadState {
-        case .hashing, .uploading, .pushingManifest:
+        case .compressing, .hashing, .uploading, .pushingManifest:
             return true
         default:
             return false
@@ -255,13 +300,16 @@ public struct OCIPushView: View {
     }
 
     private func startPush() {
-        guard let fileURL = selectedFileURL else { return }
-        let metadata = VBImageMetadata(
-            build: tag,
-            version: tag,
-            name: fileURL.deletingPathExtension().lastPathComponent
-        )
-        uploadManager.upload(ipswURL: fileURL, to: reference, metadata: metadata)
+        if let bundleURL {
+            uploadManager.uploadBundle(bundleURL: bundleURL, to: reference)
+        } else if let fileURL = selectedFileURL {
+            let metadata = VBImageMetadata(
+                build: tag,
+                version: tag,
+                name: fileURL.deletingPathExtension().lastPathComponent
+            )
+            uploadManager.upload(ipswURL: fileURL, to: reference, metadata: metadata)
+        }
     }
 
     private func formattedETA(_ eta: Double) -> String {
