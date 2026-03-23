@@ -168,8 +168,24 @@ public struct RestoreImage: CatalogModel, DownloadableCatalogContent {
     public var url: URL
     /// The size of the download in bytes.
     public var downloadSize: UInt64?
+    /// Optional OCI registry reference (e.g., "ghcr.io/org/repo:macos-15.2-24C101").
+    /// When set, the image can be pulled from an OCI registry instead of the HTTPS URL.
+    public var ociReference: String?
+    /// The type of OCI artifact: `"ipsw"` for restore images, `"vm-bundle"` for complete VM bundles.
+    public var ociArtifactType: String?
 
-    public init(id: String, group: CatalogGroup.ID, channel: CatalogChannel.ID, requirements: RequirementSet.ID, name: String, build: String, version: SoftwareVersion, mobileDeviceMinVersion: SoftwareVersion, url: URL, downloadSize: UInt64?) {
+    /// The effective download URL. Returns an `oci://` URL if `ociReference` is set, otherwise the standard HTTPS URL.
+    public var effectiveURL: URL {
+        if let ociReference, let ref = try? OCIReference(parsing: ociReference) {
+            return ref.asURL
+        }
+        return url
+    }
+
+    /// Whether this restore image represents a VM bundle rather than an IPSW.
+    public var isVMBundle: Bool { ociArtifactType == "vm-bundle" }
+
+    public init(id: String, group: CatalogGroup.ID, channel: CatalogChannel.ID, requirements: RequirementSet.ID, name: String, build: String, version: SoftwareVersion, mobileDeviceMinVersion: SoftwareVersion, url: URL, downloadSize: UInt64?, ociReference: String? = nil, ociArtifactType: String? = nil) {
         self.id = id
         self.group = group
         self.channel = channel
@@ -180,6 +196,8 @@ public struct RestoreImage: CatalogModel, DownloadableCatalogContent {
         self.mobileDeviceMinVersion = mobileDeviceMinVersion
         self.url = url
         self.downloadSize = downloadSize
+        self.ociReference = ociReference
+        self.ociArtifactType = ociArtifactType
     }
 }
 

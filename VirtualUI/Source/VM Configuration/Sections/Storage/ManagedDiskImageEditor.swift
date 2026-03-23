@@ -12,12 +12,16 @@ struct ManagedDiskImageEditor: View {
     @State private var image: VBManagedDiskImage
     var minimumSize: UInt64
     var isExistingDiskImage: Bool
+    var allowsExistingDiskImageResize: Bool
+    var requiresGuestInitialization: Bool
     var onSave: (VBManagedDiskImage) -> Void
     var isBootVolume: Bool
 
-    init(image: VBManagedDiskImage, isExistingDiskImage: Bool, isForBootVolume: Bool, onSave: @escaping (VBManagedDiskImage) -> Void) {
+    init(image: VBManagedDiskImage, isExistingDiskImage: Bool, isForBootVolume: Bool, requiresGuestInitialization: Bool, allowsExistingDiskImageResize: Bool = false, onSave: @escaping (VBManagedDiskImage) -> Void) {
         self._image = .init(wrappedValue: image)
         self.isExistingDiskImage = isExistingDiskImage
+        self.requiresGuestInitialization = requiresGuestInitialization
+        self.allowsExistingDiskImageResize = allowsExistingDiskImageResize
         self.onSave = onSave
         let fallbackMinimumSize = isForBootVolume ? VBManagedDiskImage.minimumBootDiskImageSize : VBManagedDiskImage.minimumExtraDiskImageSize
         self.minimumSize = isExistingDiskImage ? image.size : fallbackMinimumSize
@@ -54,15 +58,15 @@ struct ManagedDiskImageEditor: View {
             NumericPropertyControl(
                 value: $image.size.gbStorageValue,
                 range: minimumSize.gbStorageValue...maximumSize.gbStorageValue,
-                hideSlider: isExistingDiskImage,
+                hideSlider: isExistingDiskImage && !allowsExistingDiskImageResize,
                 label: isBootVolume ? "Boot Disk Size (GB)" : "Disk Image Size (GB)",
                 formatter: NumberFormatter.numericPropertyControlDefault
             )
-            .disabled(isExistingDiskImage)
+            .disabled(isExistingDiskImage && !allowsExistingDiskImageResize)
             .foregroundColor(sizeWarning != nil ? .yellow : .primary)
 
             VStack(alignment: .leading, spacing: 8) {
-                if !isExistingDiskImage, !isBootVolume {
+                if !isExistingDiskImage, !isBootVolume, requiresGuestInitialization {
                     Text("You'll have to use Disk Utility in the guest operating system to initialize the disk image. If you see an error after it boots up, choose the \"Initialize\" option.")
                         .foregroundColor(.yellow)
                 }
@@ -98,7 +102,11 @@ struct ManagedDiskImageEditor: View {
     }
 
     private var sizeChangeInfo: String {
-        if isBootVolume {
+        if isBootVolume && allowsExistingDiskImageResize {
+            return "You can only increase the size of this boot disk. The virtual machine must be powered off, and resizing is blocked while saved states exist."
+        } else if isBootVolume && isExistingDiskImage {
+            return "Boot disk size can only be increased while the virtual machine is powered off."
+        } else if isBootVolume {
             return "Be sure to reserve enough space, since it won't be possible to change the size of the disk later."
         } else {
             return "It's not possible to change the size of an existing storage device."

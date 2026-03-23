@@ -135,6 +135,14 @@ public struct VBManagedDiskImage: Identifiable, Hashable, Codable {
             format: .raw
         )
     }
+
+    public static func template(for guestType: VBGuestType) -> VBManagedDiskImage {
+        VBManagedDiskImage(
+            filename: RandomNameGenerator.shared.newName(),
+            size: VBManagedDiskImage.minimumExtraDiskImageSize,
+            format: .raw
+        )
+    }
 }
 
 /// Configures a storage device.
@@ -186,19 +194,20 @@ public struct VBStorageDevice: Identifiable, Hashable, Codable {
     }
 
     public static var template: VBStorageDevice {
-        let name = RandomNameGenerator.shared.newName()
-        
-        let image = VBManagedDiskImage(
-            filename: name,
-            size: VBManagedDiskImage.minimumExtraDiskImageSize,
-            format: .sparse
-        )
-        
         return VBStorageDevice(
             isBootVolume: false,
             isReadOnly: false,
             isUSBMassStorageDevice: false,
-            backing: .managedImage(image)
+            backing: .managedImage(.template)
+        )
+    }
+
+    public static func template(for guestType: VBGuestType) -> VBStorageDevice {
+        VBStorageDevice(
+            isBootVolume: false,
+            isReadOnly: false,
+            isUSBMassStorageDevice: false,
+            backing: .managedImage(.template(for: guestType))
         )
     }
     

@@ -98,7 +98,14 @@ struct VMConfigurationView: View {
 
     private var systemType: VBGuestType { viewModel.config.systemType }
 
-    private var showBootDiskSection: Bool { viewModel.context == .preInstall }
+    private var showBootDiskSection: Bool {
+        switch viewModel.context {
+        case .preInstall:
+            true
+        case .postInstall:
+            viewModel.config.systemType == .mac
+        }
+    }
 
     private var showPointingDeviceSection: Bool { systemType.supportsVirtualTrackpad }
 
@@ -160,8 +167,14 @@ struct VMConfigurationView: View {
     @ViewBuilder
     private var bootDisk: some View {
         ConfigurationSection(.constant(false), collapsingDisabled: true) {
-            if let image = (try? viewModel.vm.bootDevice)?.managedImage {
-                ManagedDiskImageEditor(image: image, isExistingDiskImage: false, isForBootVolume: true) { image in
+            if let image = try? viewModel.config.hardware.bootManagedDiskImage {
+                ManagedDiskImageEditor(
+                    image: image,
+                    isExistingDiskImage: viewModel.context == .postInstall,
+                    isForBootVolume: true,
+                    requiresGuestInitialization: false,
+                    allowsExistingDiskImageResize: viewModel.canResizeExistingBootDisk
+                ) { image in
                     viewModel.updateBootStorageDevice(with: image)
                 }
             } else {

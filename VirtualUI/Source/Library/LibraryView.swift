@@ -64,9 +64,23 @@ public struct LibraryView: View {
             }
     }
 
+    @State private var showPullVMSheet = false
+
     @ToolbarContentBuilder
     private var toolbarContents: some ToolbarContent {
         ToolbarItemGroup(placement: .primaryAction) {
+            if OCIRegistryConfiguration.current.isEnabled {
+                Button {
+                    showPullVMSheet = true
+                } label: {
+                    Image(systemName: "arrow.down.circle")
+                }
+                .help("Pull VM from Registry")
+                .sheet(isPresented: $showPullVMSheet) {
+                    OCIPullVMView(libraryURL: library.libraryURL)
+                }
+            }
+
             Button {
                 openCocoaWindow {
                     VMInstallationWizard(library: library)

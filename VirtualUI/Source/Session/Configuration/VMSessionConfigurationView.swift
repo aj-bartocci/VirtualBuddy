@@ -63,7 +63,13 @@ struct VMSessionConfigurationView: View {
             VMConfigurationSheet(
                 configuration: $controller.virtualMachineModel.configuration
             )
-            .environmentObject(VMConfigurationViewModel(vm, resolvedRestoreImage: resolvedRestoreImage))
+            .environmentObject(
+                VMConfigurationViewModel(
+                    vm,
+                    resolvedRestoreImage: resolvedRestoreImage,
+                    canResizeExistingBootDisk: controller.state.canStart && vm.configuration.systemType == .mac
+                )
+            )
         }
     }
 

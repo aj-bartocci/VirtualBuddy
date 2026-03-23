@@ -18,7 +18,14 @@ struct StorageConfigurationView: View {
     @State private var isShowingDeviceConfigurationSheet = false
     @State private var deviceBeingConfigured: VBStorageDevice?
 
-    private var hideBootDisk: Bool { viewModel.context == .preInstall }
+    private var hideBootDisk: Bool {
+        switch viewModel.context {
+        case .preInstall:
+            true
+        case .postInstall:
+            viewModel.config.systemType == .mac
+        }
+    }
 
     private func shouldHide(_ device: VBStorageDevice) -> Bool {
         if hideBootDisk {
@@ -61,7 +68,7 @@ struct StorageConfigurationView: View {
             .help("Remove selected devices")
         }
         .sheet(isPresented: $isShowingDeviceConfigurationSheet) {
-            let device = deviceBeingConfigured ?? .template
+            let device = deviceBeingConfigured ?? .template(for: viewModel.config.systemType)
             let isNewDevice = deviceBeingConfigured == nil
 
             StorageDeviceDetailView(device: device, isNewDevice: isNewDevice, onSave: { updatedDevice in

@@ -13,6 +13,7 @@ struct StorageDeviceDetailView: View {
     
     @State private var device: VBStorageDevice
     var onSave: (VBStorageDevice) async throws -> Void
+    @State private var unfocusActiveField = UnfocusFieldSubject()
     
     init(device: VBStorageDevice, isNewDevice: Bool, onSave: @escaping (VBStorageDevice) async throws -> Void) {
         self._device = .init(wrappedValue: device)
@@ -42,7 +43,7 @@ struct StorageDeviceDetailView: View {
 
     @Environment(\.dismiss)
     private var dismiss
-    
+
     private var canEditName: Bool {
         device.usesManagedDiskImage && !device.diskImageExists(for: viewModel.vm)
     }
@@ -77,9 +78,11 @@ struct StorageDeviceDetailView: View {
             }
             .padding(.top)
         }
+        .environment(\.unfocusActiveField, unfocusActiveField)
     }
     
     private func save() {
+        unfocusActiveField.send(.commit)
         isLoading = true
         
         Task {
@@ -176,7 +179,7 @@ struct StorageDeviceDetailView: View {
                     
                     Button {
                         imageType = .managed
-                        device.backing = .managedImage(.template)
+                        device.backing = .managedImage(.template(for: viewModel.config.systemType))
                     } label: {
                         Label("Create a new disk image with VirtualBuddy", systemImage: "externaldrive.fill.badge.plus")
                     }
@@ -204,6 +207,7 @@ struct StorageDeviceDetailView: View {
                     image: image,
                     isExistingDiskImage: device.diskImageExists(for: viewModel.vm),
                     isForBootVolume: device.isBootVolume,
+                    requiresGuestInitialization: viewModel.config.systemType != .mac,
                     onSave: { device.update(with: $0, type: .size) }
                 )
             case .customImage(let url):
