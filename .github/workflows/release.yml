@@ -1,0 +1,141 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build, Sign, Notarize
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
+
+      - name: Import signing certificate
+        env:
+          P12_BASE64: ${{ secrets.DEVELOPER_ID_CERTIFICATE_P12 }}
+          P12_PASSWORD: ${{ secrets.DEVELOPER_ID_CERTIFICATE_PASSWORD }}
+        run: |
+          CERTIFICATE_PATH=$RUNNER_TEMP/certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/build.keychain-db
+          KEYCHAIN_PASSWORD=$(uuidgen)
+
+          # Decode certificate
+          echo -n "$P12_BASE64" | base64 --decode -o "$CERTIFICATE_PATH"
+
+          # Create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+          # Import certificate
+          security import "$CERTIFICATE_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+          # Add to search list
+          security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
+
+      - name: Configure signing for CI
+        run: |
+          # Override signing config for Developer ID
+          cat > VirtualBuddy/Config/Signing.xcconfig << 'XCCONFIG'
+          CODE_SIGN_IDENTITY = Developer ID Application
+          CODE_SIGN_STYLE = Manual
+          DEVELOPMENT_TEAM = ${{ secrets.APPLE_TEAM_ID }}
+          VB_BUNDLE_ID_PREFIX =
+          GUEST_LAUNCH_AT_LOGIN_HELPER_BUNDLE_ID = $(VB_BUNDLE_ID_PREFIX)codes.rambo.VirtualBuddyGuestHelper
+          GUEST_LAUNCH_AT_LOGIN_HELPER_BUNDLE_ID_STR=@"$(GUEST_LAUNCH_AT_LOGIN_HELPER_BUNDLE_ID)"
+          GCC_PREPROCESSOR_DEFINITIONS=$(inherited) GUEST_LAUNCH_AT_LOGIN_HELPER_BUNDLE_ID='$(GUEST_LAUNCH_AT_LOGIN_HELPER_BUNDLE_ID_STR)'
+          XCCONFIG
+
+      - name: Resolve packages
+        run: xcodebuild -resolvePackageDependencies -project VirtualBuddy.xcodeproj -scheme VirtualBuddy
+
+      - name: Build archive
+        run: |
+          xcodebuild archive \
+            -project VirtualBuddy.xcodeproj \
+            -scheme VirtualBuddy \
+            -configuration Release \
+            -archivePath $RUNNER_TEMP/VirtualBuddy.xcarchive \
+            ARCHS=arm64 \
+            CODE_SIGN_IDENTITY="Developer ID Application" \
+            DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}" \
+            OTHER_CODE_SIGN_FLAGS="--timestamp --options runtime" \
+            CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO \
+            ENABLE_HARDENED_RUNTIME=YES
+
+      - name: Export app
+        run: |
+          # Create export options plist
+          cat > $RUNNER_TEMP/export.plist << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>developer-id</string>
+            <key>teamID</key>
+            <string>${{ secrets.APPLE_TEAM_ID }}</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+          </dict>
+          </plist>
+          EOF
+
+          xcodebuild -exportArchive \
+            -archivePath $RUNNER_TEMP/VirtualBuddy.xcarchive \
+            -exportOptionsPlist $RUNNER_TEMP/export.plist \
+            -exportPath $RUNNER_TEMP/export
+
+      - name: Notarize app
+        env:
+          APPLE_ID: ${{ secrets.NOTARIZATION_APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.NOTARIZATION_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          APP_PATH="$RUNNER_TEMP/export/VirtualBuddy.app"
+
+          # Create zip for notarization
+          ditto -c -k --keepParent "$APP_PATH" "$RUNNER_TEMP/VirtualBuddy-notarize.zip"
+
+          # Submit for notarization
+          xcrun notarytool submit "$RUNNER_TEMP/VirtualBuddy-notarize.zip" \
+            --apple-id "$APPLE_ID" \
+            --password "$APPLE_PASSWORD" \
+            --team-id "$APPLE_TEAM_ID" \
+            --wait --timeout 30m
+
+          # Staple the notarization ticket
+          xcrun stapler staple "$APP_PATH"
+
+      - name: Create release zip
+        run: |
+          cd "$RUNNER_TEMP/export"
+          ditto -c -k --keepParent VirtualBuddy.app VirtualBuddy.zip
+          echo "RELEASE_ZIP=$RUNNER_TEMP/export/VirtualBuddy.zip" >> $GITHUB_ENV
+
+      - name: Extract version from tag
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: VirtualBuddy ${{ env.VERSION }}
+          draft: true
+          generate_release_notes: true
+          files: ${{ env.RELEASE_ZIP }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cleanup keychain
+        if: always()
+        run: security delete-keychain $RUNNER_TEMP/build.keychain-db 2>/dev/null || true
